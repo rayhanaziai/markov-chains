@@ -19,7 +19,7 @@ def open_and_read_file():
     # return "This should be a variable that contains your file text as one long string"
 
 
-def make_chains(text_string):
+def make_chains(text_string, n):
     """Takes input text as string; returns _dictionary_ of markov chains.
 
     A chain will be a key that consists of a tuple of (index1, index2)
@@ -39,13 +39,17 @@ def make_chains(text_string):
 
     #Loop through our word_list
 
-    for index1 in range(len(word_list) - 2):
 
-        index2 = index1 + 1
-        index3 = index2 + 1
+    for index1 in range(len(word_list) - n):
 
-        current_tuple = (word_list[index1], word_list[index2])
-        next_word = word_list[index3]
+        current_lst = []
+        for i in range(index1, index1+n):
+            word = word_list[i]
+            current_lst.append(word)
+
+        current_tuple = tuple(current_lst)
+
+        next_word = word_list[index1+n]
 
         #inserting our tuple and values into dict
         if current_tuple in chains:
@@ -80,7 +84,7 @@ def make_text(chains):
 # # Open the file and turn it into one long string
 input_text = open_and_read_file()
 
-chains = make_chains(input_text)
+chains = make_chains(input_text, 3)
 
 print make_text(chains)
 
