@@ -2,6 +2,7 @@ from random import choice
 import sys
 import string 
 
+n = int(raw_input("What value of n would you like to use for your n-gram?"))
 
 
 def open_and_read_file():
@@ -19,7 +20,7 @@ def open_and_read_file():
     # return "This should be a variable that contains your file text as one long string"
 
 
-def make_chains(text_string, n):
+def make_chains(text_string):
     """Takes input text as string; returns _dictionary_ of markov chains.
 
     A chain will be a key that consists of a tuple of (index1, index2)
@@ -37,27 +38,26 @@ def make_chains(text_string, n):
     #Split our list into a list of words
     word_list = text_string.split()
 
-    #Loop through our word_list
+    #Loop through our word_list until "n" items remain
+    for index in range(len(word_list) - n):
 
+        keys_list = []
+        # loop through n items of word_list, and insert it into keys_list
+        for word_index in range(index, index+n):
+            keys_list.append(word_list[word_index])
 
-    for index1 in range(len(word_list) - n):
+        #turn keys_list into a tuple
+        keys_tuple = tuple(keys_list)
 
-        current_lst = []
-        for i in range(index1, index1+n):
-            word = word_list[i]
-            current_lst.append(word)
-
-        current_tuple = tuple(current_lst)
-
-        next_word = word_list[index1+n]
+        current_value = word_list[index+n]
 
         #inserting our tuple and values into dict
-        if current_tuple in chains:
-            current_values = chains[current_tuple]
-            #if the current pair exists as a key, append the value list
-            current_values.append(next_word)
+        #if the current pair exists as a key, append the value list
+        if keys_tuple in chains:
+            chains[keys_tuple].append(current_value)
+        # otherwise if key doesn't exist, add key and add value to dictionary
         else:
-            chains[current_tuple] = [next_word]
+            chains[keys_tuple] = [current_value]
     return chains
 
 
@@ -67,15 +67,16 @@ def make_text(chains):
     text_list = []
     original_key = choice(chains.keys())
     original_value = choice(chains[original_key])
-    text_list.append(original_key[0].title())
-    text_list.append(original_key[1])
+
+    for item in original_key:
+        text_list.append(item)
+
     text_list.append(original_value)
 
-    while (text_list[-2], text_list[-1]) in chains:
-        new_key = (text_list[-2], text_list[-1])
+    while tuple(text_list[-n:]) in chains:
+        new_key = tuple(text_list[-n:])
         new_value = choice(chains[new_key])
         text_list.append(new_value)
-
 
     return " ".join(text_list)
 
@@ -84,7 +85,7 @@ def make_text(chains):
 # # Open the file and turn it into one long string
 input_text = open_and_read_file()
 
-chains = make_chains(input_text, 3)
+chains = make_chains(input_text)
 
 print make_text(chains)
 
