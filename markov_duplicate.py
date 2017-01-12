@@ -1,6 +1,7 @@
 from random import choice
 import sys
 import string 
+import send_tweet
 
 n = int(raw_input("What value of n would you like to use for your n-gram?"))
 
@@ -78,7 +79,15 @@ def make_text(chains):
         new_value = choice(chains[new_key])
         text_list.append(new_value)
 
-    return " ".join(text_list)
+    text_list[0] = text_list[0].title()
+
+    final_tweet = ""
+    long_tweet = " ".join(text_list)
+    for i in range(118):
+        final_tweet = final_tweet + long_tweet[i]
+    final_tweet = final_tweet + " #hackbrightgracejan17"
+
+    return final_tweet
 
 # input_path = "gettysburg.txt"
 
@@ -87,5 +96,7 @@ input_text = open_and_read_file()
 
 chains = make_chains(input_text)
 
-print make_text(chains)
+final_tweet = make_text(chains)
+# print make_text(chains)
 
+send_tweet.post_tweet(final_tweet)
